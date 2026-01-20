@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FRT Outlook Search Folder Builder</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="topbar-inner">
+        <span>Call Us: 339-674-1000</span>
+        <span>Email Us: learnmore@frtservices.com</span>
+      </div>
+    </div>
+    <div class="page">
+      <div class="brand-bar">
+        <div class="brand">
+          <span class="brand-mark">FRT</span>
+          <span class="brand-sub">Financial Recovery Technologies</span>
+        </div>
+        <div class="brand-actions">
+          <button class="ghost">Contact Us</button>
+          <button class="primary">Client Login</button>
+        </div>
+      </div>
+      <header class="hero">
+        <div>
+          <p class="eyebrow">FRT • Securities Class Action Claim Monitoring</p>
+          <h1>Build Outlook search folders that surface client-critical emails.</h1>
+          <p class="subhead">
+            Select attributes to generate focused Outlook search folder recipes and
+            keyword strings. Save favorites for your team.
+          </p>
+        </div>
+        <div class="prompt-count">
+          <span>1</span>
+          <small>Folder recipe</small>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="card">
+          <h2>Search Builder</h2>
+          <p class="helper">
+            Start typing to filter suggestions. Use “Don’t shuffle” to lock a field.
+          </p>
+          <form id="criteria-form" class="grid">
+            <label>
+              <span>Mailbox Scope</span>
+              <span class="lock">
+                <input type="checkbox" data-lock-for="mailboxScope" checked />
+                Don't shuffle
+              </span>
+              <input
+                id="mailboxScope"
+                type="text"
+                list="mailboxScopeList"
+                placeholder="Start typing"
+                autocomplete="off"
+              />
+              <datalist id="mailboxScopeList"></datalist>
+            </label>
+            <label>
+              <span>Client Name</span>
+              <span class="lock">
+                <input type="checkbox" data-lock-for="clientShortName" checked />
+                Don't shuffle
+              </span>
+              <input
+                id="clientShortName"
+                type="text"
+                list="clientShortNameList"
+                placeholder="e.g., Vanguard or Norges Bank"
+                autocomplete="off"
+              />
+              <datalist id="clientShortNameList"></datalist>
+            </label>
+            <label>
+              <span>Client Name (Custom)</span>
+              <input
+                id="clientShortNameCustom"
+                type="text"
+                placeholder="e.g., Vanguard or Norges Bank"
+              />
+            </label>
+            <label>
+              <span>Folder Path (Desktop)</span>
+              <input
+                id="folderPath"
+                type="text"
+                placeholder="e.g., Inbox\\Clients\\NORGES"
+              />
+            </label>
+            <label class="prominent">
+              <span>Email Address</span>
+              <input
+                id="emailAddress"
+                type="text"
+                placeholder="e.g., claims@frt.com"
+              />
+            </label>
+            <label class="prominent">
+              <span>Person Name</span>
+              <input
+                id="personName"
+                type="text"
+                placeholder="e.g., Jane Doe"
+              />
+            </label>
+            <label>
+              <span>To Contains</span>
+              <input id="toField" type="text" placeholder="e.g., claims@frt.com" />
+            </label>
+            <label>
+              <span>CC Contains</span>
+              <input id="ccField" type="text" placeholder="e.g., ops@frt.com" />
+            </label>
+            <label>
+              <span>Topic Focus</span>
+              <span class="lock">
+                <input type="checkbox" data-lock-for="topicFocus" checked />
+                Don't shuffle
+              </span>
+              <input
+                id="topicFocus"
+                type="text"
+                list="topicFocusList"
+                placeholder="Start typing"
+                autocomplete="off"
+              />
+              <datalist id="topicFocusList"></datalist>
+            </label>
+            <label>
+              <span>Case / Settlement Name</span>
+              <input
+                id="caseName"
+                type="text"
+                placeholder="e.g., ABC Securities Settlement"
+              />
+            </label>
+            <label>
+              <span>Search Mode</span>
+              <select id="searchMode" required></select>
+            </label>
+            <label>
+              <span>Search Field Focus</span>
+              <select id="searchField" required></select>
+            </label>
+            <div class="quick-filters">
+              <span>Quick Filters</span>
+              <div class="toggle-grid">
+                <label class="toggle">
+                  <input id="filterUnread" type="checkbox" />
+                  Unread
+                </label>
+                <label class="toggle">
+                  <input id="filterAttachments" type="checkbox" />
+                  Has attachments
+                </label>
+                <label class="toggle">
+                  <input id="filterFlagged" type="checkbox" />
+                  Flagged
+                </label>
+                <label class="toggle">
+                  <input id="filterMentions" type="checkbox" />
+                  Mentions me
+                </label>
+                <label class="toggle">
+                  <input id="filterToMe" type="checkbox" />
+                  To me
+                </label>
+              </div>
+            </div>
+            <label>
+              <span>Keywords Bundle</span>
+              <span class="lock">
+                <input type="checkbox" data-lock-for="keywords" checked />
+                Don't shuffle
+              </span>
+              <input
+                id="keywords"
+                type="text"
+                list="keywordsList"
+                placeholder="Start typing"
+                autocomplete="off"
+              />
+              <datalist id="keywordsList"></datalist>
+            </label>
+            <label>
+              <span>Folder Destination</span>
+              <span class="lock">
+                <input type="checkbox" data-lock-for="destination" checked />
+                Don't shuffle
+              </span>
+              <input
+                id="destination"
+                type="text"
+                list="destinationList"
+                placeholder="Start typing"
+                autocomplete="off"
+              />
+              <datalist id="destinationList"></datalist>
+            </label>
+            <details class="advanced">
+              <summary>Advanced filters</summary>
+              <div class="grid">
+                <label>
+                  <span>Client Type</span>
+                  <span class="lock">
+                    <input type="checkbox" data-lock-for="clientType" checked />
+                    Don't shuffle
+                  </span>
+                  <input
+                    id="clientType"
+                    type="text"
+                    list="clientTypeList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="clientTypeList"></datalist>
+                </label>
+                <label>
+                  <span>Case Stage</span>
+                  <span class="lock">
+                    <input type="checkbox" data-lock-for="caseStage" checked />
+                    Don't shuffle
+                  </span>
+                  <input
+                    id="caseStage"
+                    type="text"
+                    list="caseStageList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="caseStageList"></datalist>
+                </label>
+                <label>
+                  <span>Jurisdiction</span>
+                  <span class="lock">
+                    <input type="checkbox" data-lock-for="jurisdiction" checked />
+                    Don't shuffle
+                  </span>
+                  <input
+                    id="jurisdiction"
+                    type="text"
+                    list="jurisdictionList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="jurisdictionList"></datalist>
+                </label>
+                <label>
+                  <span>Client Priority</span>
+                  <span class="lock">
+                    <input type="checkbox" data-lock-for="priority" checked />
+                    Don't shuffle
+                  </span>
+                  <input
+                    id="priority"
+                    type="text"
+                    list="priorityList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="priorityList"></datalist>
+                </label>
+                <label>
+                  <span>Message Age</span>
+                  <span class="lock">
+                    <input type="checkbox" data-lock-for="age" checked />
+                    Don't shuffle
+                  </span>
+                  <input
+                    id="age"
+                    type="text"
+                    list="ageList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="ageList"></datalist>
+                </label>
+                <label>
+                  <span>Sender Focus</span>
+                  <span class="lock">
+                    <input type="checkbox" data-lock-for="senderFocus" checked />
+                    Don't shuffle
+                  </span>
+                  <input
+                    id="senderFocus"
+                    type="text"
+                    list="senderFocusList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="senderFocusList"></datalist>
+                </label>
+                <label>
+                  <span>Attachment Filter</span>
+                  <span class="lock">
+                    <input type="checkbox" data-lock-for="attachments" checked />
+                    Don't shuffle
+                  </span>
+                  <input
+                    id="attachments"
+                    type="text"
+                    list="attachmentsList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="attachmentsList"></datalist>
+                </label>
+                <label>
+                  <span>Exclusions</span>
+                  <span class="lock">
+                    <input type="checkbox" data-lock-for="exclusions" checked />
+                    Don't shuffle
+                  </span>
+                  <input
+                    id="exclusions"
+                    type="text"
+                    list="exclusionsList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="exclusionsList"></datalist>
+                </label>
+              </div>
+            </details>
+          </form>
+          <div class="actions">
+            <button id="generate" class="primary">Generate Search</button>
+            <button id="shuffle" class="ghost">Shuffle Suggestions</button>
+            <button id="save-favorite" class="ghost">Save to Favorites</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Search Strings</h2>
+            <div class="badge" id="selectionBadge">Selections ready</div>
+          </div>
+          <ol id="recipe-list" class="prompt-list"></ol>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Outlook Folder Best Practices</h2>
+            <div class="badge">Examples</div>
+          </div>
+          <div class="best-practices">
+            <div class="practice">
+              <h3>Standard Folder Structure (Veteran Guidance)</h3>
+              <p>
+                Keep one shared structure so anyone can jump into a mailbox and know
+                where to look. Names stay short, specific, and consistent.
+              </p>
+              <pre class="example">Inbox\n  FRT → Clients\n    [Client Short Name]\n      01 — Remittance\n      02 — Documentation\n      03 — Case Updates\n      04 — Claims Deadlines\n      05 — Distributions\n  FRT → Team Updates\n    Legal Updates\n    Monitoring Alerts\n    Operations\n    Marketing & Events\n  FRT → Admin\n    Vendor Questionnaires\n    Audit Requests\n    Policies & SOPs</pre>
+            </div>
+            <div class="practice">
+              <h3>Veteran Pointers (Keep It Fast)</h3>
+              <p>
+                The best structure is the one you can scan in five seconds. Fewer
+                folders, predictable names, and a single place for time-critical
+                items.
+              </p>
+              <pre class="example">1) Keep “Clients” and “Team Updates” separate.\n2) Prefix with numbers to lock order (01, 02, 03).\n3) Put deadlines and distributions in fixed slots.\n4) Use client short names only (CSIM, NORGES).\n5) Avoid “misc” — rename the folder instead.</pre>
+            </div>
+            <div class="practice">
+              <h3>Search Tips (When You Can’t Find It)</h3>
+              <p>Use quotes, narrow fields, and search within the folder first.</p>
+              <pre class="example">folder:\"Inbox\\FRT → Clients\\NORGES\" subject:\"Settlement\" hasattachments:yes\nfrom:\"custodian\" \"NORGES\" \"proof of claim\"</pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Favorites</h2>
+            <div class="badge" id="favoritesCount">0 saved</div>
+          </div>
+          <div id="favorites-empty" class="helper">
+            Save a set of filters to quickly reload them later.
+          </div>
+          <div id="favorites-list" class="favorites"></div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>
+          FRT is the global leader in shareholder litigation services. Use these
+          recipes to create Outlook search folders that surface client-critical
+          updates fast.
+        </p>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+

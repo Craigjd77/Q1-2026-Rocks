@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRT Training Portal: Buy-Sell Matching & Filing Strategy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; }
+        header { background-color: #007bff; color: white; padding: 40px 0; text-align: center; }
+        .navbar { background-color: #0056b3; }
+        .section { padding: 60px 0; }
+        .interactive-card { background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 30px; }
+        .btn-primary { background-color: #007bff; border: none; }
+        .btn-primary:hover { background-color: #0056b3; }
+        table { margin-top: 20px; }
+        canvas { max-width: 100%; height: auto; }
+        .callout { background: #eef6ff; border-left: 4px solid #007bff; padding: 15px; border-radius: 8px; }
+        .pill { display: inline-block; padding: 4px 10px; border-radius: 16px; font-size: 0.85em; background: #e9ecef; margin-right: 6px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-graduation-cap"></i> FRT Training Portal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#intro">Introduction</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#aggregation">Aggregate vs. Disaggregate</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#matching">Matching Methods</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#recognized-loss">Recognized Loss Demo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#filing-lifecycle">Filing Lifecycle</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#plan-allocation">Plan of Allocation</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header>
+        <div class="container">
+            <h1 class="display-5">Buy-Sell Matching & Filing Strategy</h1>
+            <p class="lead">Focused training for FRT account managers supporting asset owners and public pensions</p>
+        </div>
+    </header>
+
+    <section id="intro" class="section bg-light">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-info-circle"></i> Introduction</h2>
+            <p>Settlements in securities class actions use a Plan of Allocation to distribute funds based on Recognized Loss. This training focuses on buy-sell matching and the filing strategy for asset owner clients, especially public pensions.</p>
+            <div class="callout mt-3">
+                <strong>Core Focus:</strong> Aggregate vs. Disaggregate filing decisions and how FIFO matching drives Recognized Loss.
+            </div>
+        </div>
+    </section>
+
+    <section id="aggregation" class="section">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-layer-group"></i> Aggregate vs. Disaggregate Filing</h2>
+            <div class="interactive-card">
+                <p>For asset owner clients (e.g., public pensions), FRT compares Aggregate filing vs. Disaggregate filing to maximize Recognized Loss.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Aggregate Filing</h4>
+                        <p><span class="pill">Account Name</span> <strong>ClientShortname AGGREGATE</strong></p>
+                        <ul>
+                            <li>We submit one consolidated claim for the client.</li>
+                            <li>Used when Aggregate analysis yields higher Recognized Loss.</li>
+                            <li>Sometimes yields more RL when positions net favorably across accounts.</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Disaggregate Filing</h4>
+                        <ul>
+                            <li>Used when Aggregate RL is smaller than filing accounts separately.</li>
+                            <li>We run transfers, then file each eligible account individually.</li>
+                            <li>Maximizes RL in cases where individual account outcomes are stronger.</li>
+                            <li>We do not use Aggregate filing for Fair Fund cases because doc audits are too complicated at the aggregate level.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="callout mt-3">
+                    <strong>Decision Rule:</strong> If Aggregate RL &lt; Disaggregate RL, we file each eligible account individually. If Aggregate RL is higher, we file one consolidated claim.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="matching" class="section bg-light">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-exchange-alt"></i> Buy-Sell Matching Methods</h2>
+            <p>Matching determines which purchases are paired with sales for Recognized Loss calculations.</p>
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><strong>FIFO:</strong> Matches oldest buys to sales. Standard in class actions and typically maximizes losses.</li>
+                <li class="list-group-item"><strong>LIFO:</strong> Matches newest buys to sales. Rare in litigation.</li>
+                <li class="list-group-item"><strong>Specific Identification:</strong> Precise lot matching. Complex for large portfolios.</li>
+            </ul>
+            <div class="interactive-card">
+                <h3>How to Explain Matching to Clients</h3>
+                <p><strong>Simple framing:</strong> “Matching is the rule that determines which purchases are paired with which sales to calculate loss.”</p>
+                <ul>
+                    <li><strong>FIFO (standard in settlements):</strong> oldest buys matched first, which often increases recognized loss.</li>
+                    <li><strong>Why it matters:</strong> matching can change recognized loss even if total shares are the same.</li>
+                    <li><strong>What clients care about:</strong> consistency with the Plan of Allocation and fairness across all claimants.</li>
+                </ul>
+                <h4 class="mt-3">Mini Example (FIFO vs. LIFO)</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th>Method</th><th>Matched Buy Price</th><th>Sale Price</th><th>Loss per Share</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>FIFO</td><td>$20.00</td><td>$10.00</td><td>$10.00</td></tr>
+                        <tr><td>LIFO</td><td>$12.00</td><td>$10.00</td><td>$2.00</td></tr>
+                    </tbody>
+                </table>
+                <div class="callout">
+                    <strong>Key takeaway:</strong> FIFO is standard in most plans and typically results in higher recognized loss for the same trading history.
+                </div>
+            </div>
+            <div class="interactive-card">
+                <h3>Step-by-Step Demonstration (High-School Friendly)</h3>
+                <p><strong>Think of it like a stack of boxes:</strong> you bought two boxes of shares at different prices, and later you sold one box.</p>
+                <div class="callout">
+                    <strong>Goal:</strong> Figure out which box was sold first. That choice changes the loss.
+                </div>
+                <div class="mt-3">
+                    <div><span class="pill">Buy #1</span> 1,000 shares at <strong>$20</strong> (older)</div>
+                    <div><span class="pill">Buy #2</span> 500 shares at <strong>$12</strong> (newer)</div>
+                    <div><span class="pill">Sell</span> 1,000 shares at <strong>$10</strong></div>
+                </div>
+                <div class="mt-3 p-3 bg-light rounded">
+                    <div><strong>Visual:</strong> Boxes of shares</div>
+                    <div class="mt-2">
+                        <span class="pill">Old Box: $20</span>
+                        <span class="pill">New Box: $12</span>
+                        <span class="pill">Sell: $10</span>
+                    </div>
+                </div>
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr><th>Type</th><th>Date</th><th>Shares</th><th>Price</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Buy</td><td>2022-01-05</td><td>1,000</td><td>$20.00</td></tr>
+                        <tr><td>Buy</td><td>2022-02-10</td><td>500</td><td>$12.00</td></tr>
+                        <tr><td>Sell</td><td>2022-03-15</td><td>1,000</td><td>$10.00</td></tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>FIFO Result</h4>
+                        <ol>
+                            <li>FIFO means “first in, first out.”</li>
+                            <li>You sell the <strong>oldest</strong> box first: $20 → $10.</li>
+                            <li>Loss per share = $20 - $10 = <strong>$10</strong>.</li>
+                            <li>Total RL = 1,000 × $10 = <strong>$10,000</strong>.</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>LIFO Result</h4>
+                        <ol>
+                            <li>LIFO means “last in, first out.”</li>
+                            <li>You sell the <strong>newest</strong> box first: $12 → $10.</li>
+                            <li>Loss = (500 × $2) + (500 × $10) = <strong>$6,000</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="callout">
+                    <strong>Why this matters:</strong> Same trades, different method, different loss.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="recognized-loss" class="section">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-chart-line"></i> Recognized Loss Demonstration</h2>
+            <p>This example shows how FIFO matching drives Recognized Loss for a single account.</p>
+            <div class="interactive-card">
+                <h3>Example Transactions (Simplified)</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th>Type</th><th>Date</th><th>Shares</th><th>Price</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Purchase</td><td>2022-01-05</td><td>1,000</td><td>$20.00</td></tr>
+                        <tr><td>Purchase</td><td>2022-02-10</td><td>500</td><td>$18.00</td></tr>
+                        <tr><td>Sale</td><td>2022-03-15</td><td>1,000</td><td>$10.00</td></tr>
+                    </tbody>
+                </table>
+                <h4>FIFO Matching Result</h4>
+                <ol>
+                    <li>Match sale of 1,000 shares to the earliest 1,000-share purchase at $20.00.</li>
+                    <li>Recognized Loss per share = $20.00 - $10.00 = $10.00.</li>
+                    <li>Total Recognized Loss = 1,000 × $10.00 = <strong>$10,000</strong>.</li>
+                </ol>
+                <div class="callout">
+                    This demo is illustrative for training. Actual Plans of Allocation and PSLRA rules may apply in live cases.
+                </div>
+                <canvas id="lossDemoChart" class="mt-4"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="filing-lifecycle" class="section bg-light">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-route"></i> Filing Lifecycle: Complaint to Disbursement</h2>
+            <div class="interactive-card">
+                <p>This end-to-end lifecycle reflects how cases move from initial complaints through settlement, filing, and disbursement.</p>
+                <ol>
+                    <li><strong>Initial Court Complaints Filed:</strong> Multiple complaints are filed in federal court after the alleged disclosure event.</li>
+                    <li><strong>Consolidation & Lead Plaintiff Motion:</strong> Related complaints are consolidated; investors apply to be lead plaintiff.</li>
+                    <li><strong>Appointment of Lead Plaintiff & Counsel:</strong> Court appoints lead plaintiff and approves lead counsel.</li>
+                    <li><strong>Class Certification & Litigation:</strong> Motions, discovery, and rulings shape the case posture.</li>
+                    <li><strong>Settlement Negotiation:</strong> Parties reach a settlement agreement and propose a Plan of Allocation.</li>
+                    <li><strong>Preliminary Approval & Notice:</strong> Court grants preliminary approval and notices are sent.</li>
+                    <li><strong>Claim Filing Window:</strong> Investors submit claims with trade data and supporting documentation.</li>
+                    <li><strong>Filing Document Audits:</strong> Claims are reviewed, reconciled, and audited for accuracy and eligibility.</li>
+                    <li><strong>Final Approval:</strong> Court grants final approval of the settlement and allocation plan.</li>
+                    <li><strong>Disbursement:</strong> Approved claims are paid out pro-rata based on Recognized Loss.</li>
+                </ol>
+            </div>
+
+            <div class="interactive-card">
+                <h3><i class="fas fa-toggle-on"></i> Opt-in vs. Opt-out Participation</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>US: Opt-out System</h4>
+                        <ul>
+                            <li>Eligible investors are automatically included unless they opt out.</li>
+                            <li>Maximizes participation and total recovery pool.</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>EU/Other: Opt-in Systems</h4>
+                        <ul>
+                            <li>Investors must actively opt in to participate.</li>
+                            <li>Requires proactive client outreach and enrollment.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="interactive-card">
+                <h3><i class="fas fa-crown"></i> Lead Plaintiff Selection</h3>
+                <p>Large institutional investors can seek lead plaintiff status to influence strategy, settlement terms, and counsel selection.</p>
+                <ul>
+                    <li>Selection typically favors the investor with the largest financial interest.</li>
+                    <li>Lead plaintiff has a fiduciary role to protect the class.</li>
+                    <li>For large asset owners, this can improve outcomes and visibility.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="plan-allocation" class="section bg-light">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-percentage"></i> Plan of Allocation (Pro-Rata Simulator)</h2>
+            <p>Distributes settlement funds pro-rata based on Recognized Loss.</p>
+            <div class="interactive-card">
+                <h3>Pro-Rata Allocation Simulator</h3>
+                <input type="number" class="form-control mb-2" id="yourLoss" placeholder="Your Total Recognized Loss">
+                <input type="number" class="form-control mb-2" id="totalLosses" placeholder="Total Class Losses">
+                <input type="number" class="form-control mb-2" id="fund" placeholder="Settlement Fund">
+                <button class="btn btn-primary" onclick="calculateAllocation()"><i class="fas fa-calculator"></i> Calculate Share</button>
+                <p id="allocationResult" class="mt-3 fw-bold"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2026 Financial Recovery Technologies. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        function calculateAllocation() {
+            const yourLoss = parseFloat(document.getElementById('yourLoss').value);
+            const totalLosses = parseFloat(document.getElementById('totalLosses').value);
+            const fund = parseFloat(document.getElementById('fund').value);
+            if (yourLoss && totalLosses && fund) {
+                const share = (yourLoss / totalLosses) * fund;
+                document.getElementById('allocationResult').innerHTML = `Your Pro-Rata Share: $${share.toFixed(2)}`;
+            }
+        }
+
+        const lossCtx = document.getElementById('lossDemoChart').getContext('2d');
+        new Chart(lossCtx, {
+            type: 'bar',
+            data: { labels: ['Lot 1 Loss'], datasets: [{ label: 'Recognized Loss', data: [10000], backgroundColor: '#007bff' }] },
+            options: { scales: { y: { beginAtZero: true } }, plugins: { title: { display: true, text: 'FIFO Loss Demonstration' } } }
+        });
+    </script>
+</body>
+</html>
+

@@ -435,6 +435,40 @@ button {
   font-size: 13px;
 }
 
+.landing {
+  padding-top: 28px;
+}
+
+.landing-card .helper {
+  margin-top: 0;
+}
+
+.landing-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.landing-links a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.primary-link {
+  background: var(--success);
+  color: var(--success-ink);
+  border-color: transparent;
+}
+
+.ghost-link {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 @media (max-width: 720px) {
   .hero {
     flex-direction: column;

@@ -313,9 +313,6 @@ const recipeTemplates = [
     `Search name: ${summary}\nSearch query: ${searchQuery}`,
 ];
 
-const clientShortNameCustomInput = document.getElementById(
-  "clientShortNameCustom"
-);
 const clientFullNameInput = document.getElementById("clientFullName");
 const caseNameInput = document.getElementById("caseName");
 const folderPathInput = document.getElementById("folderPath");
@@ -392,23 +389,28 @@ const loadOptions = () => {
   }
 };
 
-const normalizeValue = (value) => (value ? value.trim() : "");
-const normalizeText = (value) => value.trim();
+const resolveValue = (value) => {
+  if (value && typeof value === "object" && "value" in value) {
+    return value.value;
+  }
+  return value;
+};
+
+const normalizeValue = (value) => {
+  const resolved = resolveValue(value);
+  if (resolved == null) return "";
+  return typeof resolved === "string" ? resolved.trim() : String(resolved).trim();
+};
+
+const normalizeText = (value) => normalizeValue(value);
 const includeValue = (id, value) =>
   isIncluded(id) ? normalizeValue(value) : "";
-
-const getClientShortName = () => {
-  const custom = normalizeText(clientShortNameCustomInput.value);
-  if (custom) return custom;
-  return normalizeValue(fieldElements.clientShortName.value);
-};
 
 const getCaseName = () => normalizeText(caseNameInput.value);
 
 const getCurrentSelections = () => ({
   mailboxScope: fieldElements.mailboxScope.value,
   clientShortName: fieldElements.clientShortName.value,
-  clientShortNameCustom: clientShortNameCustomInput.value,
   clientFullName: clientFullNameInput.value,
   folderPath: folderPathInput.value,
   toField: toFieldInput.value,
@@ -438,9 +440,7 @@ const getCurrentSelections = () => ({
 });
 
 const buildSummary = (values) => {
-  const clientShortName =
-    normalizeText(values.clientShortNameCustom) ||
-    includeValue("clientShortName", values.clientShortName);
+  const clientShortName = includeValue("clientShortName", values.clientShortName);
   const caseName = normalizeText(values.caseName);
   const mailboxScope = includeValue("mailboxScope", values.mailboxScope);
   const topicFocus = includeValue("topicFocus", values.topicFocus);
@@ -459,18 +459,16 @@ const buildSummary = (values) => {
 };
 
 const buildFilter = (values) => {
-  const clientShortName =
-    normalizeText(values.clientShortNameCustom) ||
-    normalizeValue(values.clientShortName);
+  const clientShortName = normalizeValue(values.clientShortName);
   const caseName = normalizeText(values.caseName);
   const folderPath = normalizeText(values.folderPath);
   const toField = normalizeText(values.toField);
   const ccField = normalizeText(values.ccField);
   const emailAddress = normalizeText(values.emailAddress);
   const personName = normalizeText(values.personName);
+  const mailboxScope = includeValue("mailboxScope", values.mailboxScope);
   const clientFullName =
     normalizeText(values.clientFullName) ||
-    normalizeText(values.clientShortNameCustom) ||
     normalizeValue(values.clientShortName);
   const quickFilters = [
     values.filterUnread && "Unread",
@@ -513,9 +511,7 @@ const buildFilter = (values) => {
 };
 
 const buildSearchQuery = (values) => {
-  const clientShortName =
-    normalizeText(values.clientShortNameCustom) ||
-    normalizeValue(values.clientShortName);
+  const clientShortName = normalizeValue(values.clientShortName);
   const caseName = normalizeText(values.caseName);
   const folderPath = normalizeText(values.folderPath);
   const toField = normalizeText(values.toField);
@@ -524,7 +520,6 @@ const buildSearchQuery = (values) => {
   const personName = normalizeText(values.personName);
   const clientFullName =
     normalizeText(values.clientFullName) ||
-    normalizeText(values.clientShortNameCustom) ||
     normalizeValue(values.clientShortName);
   const isNarrow = values.searchMode === "Narrow search";
   const subjectOnly = values.searchField === "Subject only";
@@ -693,8 +688,7 @@ const buildRecipes = () => {
   });
 
   const badgeValues = [
-    normalizeText(values.clientShortNameCustom) ||
-      normalizeValue(values.clientShortName),
+    normalizeValue(values.clientShortName),
     normalizeValue(values.topicFocus),
     normalizeValue(values.caseStage),
     normalizeValue(values.clientType),
@@ -720,7 +714,6 @@ const writeFavorites = (favorites) => {
 const setSelections = (values) => {
   fieldElements.mailboxScope.value = values.mailboxScope;
   fieldElements.clientShortName.value = values.clientShortName;
-  clientShortNameCustomInput.value = values.clientShortNameCustom || "";
   clientFullNameInput.value = values.clientFullName || "";
   folderPathInput.value = values.folderPath || "";
   toFieldInput.value = values.toField || "";
@@ -766,8 +759,7 @@ const renderFavorites = () => {
     const meta = document.createElement("div");
     meta.className = "favorite-meta";
     meta.textContent = [
-      normalizeText(favorite.values.clientShortNameCustom) ||
-        normalizeValue(favorite.values.clientShortName),
+      normalizeValue(favorite.values.clientShortName),
       normalizeText(favorite.values.folderPath),
       normalizeText(favorite.values.toField),
       normalizeText(favorite.values.ccField),
@@ -815,9 +807,7 @@ const renderFavorites = () => {
 };
 
 const buildFavoriteName = (values) => {
-  const clientShortName =
-    normalizeText(values.clientShortNameCustom) ||
-    normalizeValue(values.clientShortName);
+  const clientShortName = normalizeValue(values.clientShortName);
   const topic = normalizeValue(values.topicFocus);
   const caseName = normalizeText(values.caseName);
   return `${

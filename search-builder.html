@@ -43,8 +43,8 @@
         <section class="card">
           <h2>Search Builder</h2>
           <p class="helper">
-            Start typing to filter suggestions. Use the checkbox to include or
-            exclude a field from the search.
+            Start typing to filter suggestions. Use the checkbox to include a field
+            in the search.
           </p>
           <form id="criteria-form" class="grid">
             <label>
@@ -64,6 +64,14 @@
               <small class="helper">Use your actual folder path if it differs.</small>
             </label>
             <label>
+              <span>Client Full Name</span>
+              <input
+                id="clientFullName"
+                type="text"
+                placeholder="e.g., Vanguard Group"
+              />
+            </label>
+            <label>
               <span>Client Short Name</span>
               <span class="lock">
                 <input type="checkbox" data-include-for="clientShortName" checked />
@@ -77,22 +85,6 @@
                 autocomplete="off"
               />
               <datalist id="clientShortNameList"></datalist>
-            </label>
-            <label>
-              <span>Client Short Name (Custom)</span>
-              <input
-                id="clientShortNameCustom"
-                type="text"
-                placeholder="e.g., CSIM or NORGES"
-              />
-            </label>
-            <label>
-              <span>Client Full Name</span>
-              <input
-                id="clientFullName"
-                type="text"
-                placeholder="e.g., Vanguard Group"
-              />
             </label>
             <label>
               <span>Folder Path (Desktop)</span>
@@ -119,14 +111,6 @@
               />
             </label>
             <label>
-              <span>To Contains</span>
-              <input id="toField" type="text" placeholder="e.g., claims@frt.com" />
-            </label>
-            <label>
-              <span>CC Contains</span>
-              <input id="ccField" type="text" placeholder="e.g., ops@frt.com" />
-            </label>
-            <label>
               <span>Topic Focus</span>
               <span class="lock">
                 <input type="checkbox" data-include-for="topicFocus" checked />
@@ -149,83 +133,103 @@
                 placeholder="e.g., ABC Securities Settlement"
               />
             </label>
-            <label>
-              <span>Search Mode</span>
-              <select id="searchMode" required></select>
-            </label>
-            <label>
-              <span>Search Field Focus</span>
-              <select id="searchField" required></select>
-            </label>
-            <div class="quick-filters">
-              <span>Quick Filters</span>
-              <small>Flagged and Mentions work best in Outlook Web.</small>
-              <div class="toggle-grid">
-                <label class="toggle">
-                  <input id="filterUnread" type="checkbox" />
-                  Unread
-                </label>
-                <label class="toggle">
-                  <input id="filterAttachments" type="checkbox" />
-                  Has attachments
-                </label>
-                <label class="toggle">
-                  <input id="filterFlagged" type="checkbox" />
-                  Flagged (Web)
-                </label>
-                <label class="toggle">
-                  <input id="filterMentions" type="checkbox" />
-                  Mentions me (Web)
-                </label>
-                <label class="toggle">
-                  <input id="filterToMe" type="checkbox" />
-                  To me
-                </label>
-              </div>
-            </div>
-            <div class="quick-filters template-filters">
-              <span>Common Templates</span>
-              <small>Use when the subject and sender follow a fixed pattern.</small>
-              <div class="toggle-grid">
-                <label class="toggle">
-                  <input id="remittancePreset" type="checkbox" />
-                  Remittance Report (FRT-ClientSupport)
-                </label>
-              </div>
-            </div>
-            <label>
-              <span>Keywords Bundle</span>
-              <span class="lock">
-                <input type="checkbox" data-include-for="keywords" checked />
-                Include
-              </span>
-              <input
-                id="keywords"
-                type="text"
-                list="keywordsList"
-                placeholder="Start typing"
-                autocomplete="off"
-              />
-              <datalist id="keywordsList"></datalist>
-            </label>
-            <label>
-              <span>Folder Destination</span>
-              <span class="lock">
-                <input type="checkbox" data-include-for="destination" checked />
-                Include
-              </span>
-              <input
-                id="destination"
-                type="text"
-                list="destinationList"
-                placeholder="Start typing"
-                autocomplete="off"
-              />
-              <datalist id="destinationList"></datalist>
-            </label>
             <details class="advanced">
               <summary>Advanced filters</summary>
+              <div class="quick-filters">
+                <span>Quick Filters</span>
+                <small>Flagged and Mentions work best in Outlook Web.</small>
+                <div class="toggle-grid">
+                  <label class="toggle">
+                    <input id="filterUnread" type="checkbox" />
+                    Unread
+                  </label>
+                  <label class="toggle">
+                    <input id="filterAttachments" type="checkbox" />
+                    Has attachments
+                  </label>
+                  <label class="toggle">
+                    <input id="filterFlagged" type="checkbox" />
+                    Flagged (Web)
+                  </label>
+                  <label class="toggle">
+                    <input id="filterMentions" type="checkbox" />
+                    Mentions me (Web)
+                  </label>
+                  <label class="toggle">
+                    <input id="filterToMe" type="checkbox" />
+                    To me
+                  </label>
+                </div>
+              </div>
+              <div class="quick-filters template-filters">
+                <span>Common Templates</span>
+                <small>Use when the subject and sender follow a fixed pattern.</small>
+                <div class="toggle-grid">
+                  <label class="toggle">
+                    <input id="remittancePreset" type="checkbox" />
+                    Remittance Report (FRT-ClientSupport)
+                  </label>
+                  <label class="toggle">
+                    <input id="settlementNoticePreset" type="checkbox" />
+                    Settlement Notice
+                  </label>
+                  <label class="toggle">
+                    <input id="claimsDeadlinePreset" type="checkbox" />
+                    Claims Deadline
+                  </label>
+                  <label class="toggle">
+                    <input id="rejectionNoticePreset" type="checkbox" />
+                    Rejection / Deficiency
+                  </label>
+                </div>
+              </div>
               <div class="grid">
+                <label>
+                  <span>To Contains</span>
+                  <input id="toField" type="text" placeholder="e.g., claims@frt.com" />
+                </label>
+                <label>
+                  <span>CC Contains</span>
+                  <input id="ccField" type="text" placeholder="e.g., ops@frt.com" />
+                </label>
+                <label>
+                  <span>Search Mode</span>
+                  <select id="searchMode" required></select>
+                </label>
+                <label>
+                  <span>Search Field Focus</span>
+                  <select id="searchField" required></select>
+                </label>
+                <label>
+                  <span>Keywords Bundle</span>
+                  <span class="lock">
+                    <input type="checkbox" data-include-for="keywords" checked />
+                    Include
+                  </span>
+                  <input
+                    id="keywords"
+                    type="text"
+                    list="keywordsList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="keywordsList"></datalist>
+                </label>
+                <label>
+                  <span>Folder Destination</span>
+                  <span class="lock">
+                    <input type="checkbox" data-include-for="destination" checked />
+                    Include
+                  </span>
+                  <input
+                    id="destination"
+                    type="text"
+                    list="destinationList"
+                    placeholder="Start typing"
+                    autocomplete="off"
+                  />
+                  <datalist id="destinationList"></datalist>
+                </label>
                 <label>
                   <span>Client Type</span>
                   <span class="lock">
@@ -352,6 +356,7 @@
           <div class="actions">
             <button id="generate" class="primary">Generate Search</button>
             <button id="save-favorite" class="ghost">Save to Favorites</button>
+            <button id="clear-form" class="ghost" type="button">Clear</button>
           </div>
         </section>
 

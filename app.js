@@ -542,21 +542,23 @@ const buildSearchQuery = (values) => {
   const subjectOnly = values.searchField === "Subject only";
   const wrapTerm = (term) =>
     subjectOnly ? `subject:"${term}"` : `"${term}"`;
-  const terms = [];
+  const strictTerms = [];
+  const flexTerms = [];
 
   if (mailboxScope && mailboxScope !== "All mailboxes") {
-    terms.push(`folder:"${mailboxScope}"`);
+    strictTerms.push(`folder:"${mailboxScope}"`);
   }
 
   if (includeValue("senderFocus", values.senderFocus)) {
-    terms.push(`from:"${values.senderFocus}"`);
+    flexTerms.push(`from:"${values.senderFocus}"`);
   }
   if (toField) {
-    terms.push(`to:"${toField}"`);
+    strictTerms.push(`to:"${toField}"`);
   }
   if (ccField) {
-    terms.push(`cc:"${ccField}"`);
+    strictTerms.push(`cc:"${ccField}"`);
   }
+
   const fromTerms = [];
   if (emailAddress) {
     fromTerms.push(`from:"${emailAddress}"`);
@@ -565,67 +567,70 @@ const buildSearchQuery = (values) => {
     fromTerms.push(`from:"${personName}"`);
   }
   if (fromTerms.length === 1) {
-    terms.push(fromTerms[0]);
+    flexTerms.push(fromTerms[0]);
   }
   if (fromTerms.length > 1) {
-    terms.push(`(${fromTerms.join(" OR ")})`);
+    flexTerms.push(`(${fromTerms.join(" OR ")})`);
   }
+
   if (values.filterUnread) {
-    terms.push("isread:no");
+    strictTerms.push("isread:no");
   }
   if (values.filterAttachments) {
-    terms.push("hasattachments:yes");
+    strictTerms.push("hasattachments:yes");
   }
   if (values.filterFlagged) {
-    terms.push("flagged:yes");
+    strictTerms.push("flagged:yes");
   }
   if (values.filterMentions) {
-    terms.push("mentions:me");
+    strictTerms.push("mentions:me");
   }
   if (values.filterToMe) {
-    terms.push("to:me");
+    strictTerms.push("to:me");
   }
+
   if (values.remittancePreset) {
     if (clientFullName) {
-      terms.push(`subject:"Remittance Report - ${clientFullName}"`);
+      strictTerms.push(`subject:"Remittance Report - ${clientFullName}"`);
     }
-    terms.push('from:"FRT-ClientSupport"');
+    strictTerms.push('from:"FRT-ClientSupport"');
   }
   if (values.settlementNoticePreset) {
-    terms.push('subject:"Settlement Notice"');
+    strictTerms.push('subject:"Settlement Notice"');
     if (clientFullName) {
-      terms.push(wrapTerm(clientFullName));
+      strictTerms.push(wrapTerm(clientFullName));
     }
   }
   if (values.claimsDeadlinePreset) {
-    terms.push('(subject:"Claims Deadline" OR subject:"Claim Deadline")');
+    strictTerms.push('(subject:"Claims Deadline" OR subject:"Claim Deadline")');
     if (clientFullName) {
-      terms.push(wrapTerm(clientFullName));
+      strictTerms.push(wrapTerm(clientFullName));
     }
   }
   if (values.rejectionNoticePreset) {
-    terms.push('(subject:"Rejection" OR subject:"Deficiency")');
+    strictTerms.push('(subject:"Rejection" OR subject:"Deficiency")');
     if (clientFullName) {
-      terms.push(wrapTerm(clientFullName));
+      strictTerms.push(wrapTerm(clientFullName));
     }
   }
+
   if (folderPath && !folderPath.startsWith("[object")) {
-    terms.push(`folder:"${folderPath}"`);
+    strictTerms.push(`folder:"${folderPath}"`);
   }
   if (clientShortName) {
-    terms.push(wrapTerm(clientShortName));
+    flexTerms.push(wrapTerm(clientShortName));
   }
   if (includeValue("topicFocus", values.topicFocus)) {
-    terms.push(wrapTerm(values.topicFocus));
+    flexTerms.push(wrapTerm(values.topicFocus));
   }
   if (caseName) {
-    terms.push(wrapTerm(caseName));
+    flexTerms.push(wrapTerm(caseName));
   }
   if (includeValue("caseStage", values.caseStage)) {
-    terms.push(wrapTerm(values.caseStage));
+    flexTerms.push(wrapTerm(values.caseStage));
   }
   if (includeValue("jurisdiction", values.jurisdiction)) {
-    terms.push(wrapTerm(values.jurisdiction));
+    flexTerms.push(wrapTerm(values.jurisdiction));
   }
   if (includeValue("keywords", values.keywords)) {
     const keywordTerms = values.keywords
@@ -634,9 +639,10 @@ const buildSearchQuery = (values) => {
       .filter(Boolean)
       .map((term) => wrapTerm(term));
     if (keywordTerms.length) {
-      terms.push(
-        isNarrow ? `(${keywordTerms.join(" AND ")})` : `(${keywordTerms.join(" OR ")})`
-      );
+      const keywordGroup = isNarrow
+        ? `(${keywordTerms.join(" AND ")})`
+        : `(${keywordTerms.join(" OR ")})`;
+      flexTerms.push(keywordGroup);
     }
   }
   if (includeValue("attachments", values.attachments)) {
@@ -649,12 +655,12 @@ const buildSearchQuery = (values) => {
       "Has image attachments": "(ext:png OR ext:jpg OR ext:jpeg)",
     };
     if (values.attachments === "No attachments") {
-      terms.push("hasattachments:no");
+      strictTerms.push("hasattachments:no");
     } else if (values.attachments === "Has any attachment") {
-      terms.push("hasattachments:yes");
+      strictTerms.push("hasattachments:yes");
     } else if (attachmentMap[values.attachments]) {
-      terms.push("hasattachments:yes");
-      terms.push(attachmentMap[values.attachments]);
+      strictTerms.push("hasattachments:yes");
+      strictTerms.push(attachmentMap[values.attachments]);
     }
   }
   if (includeValue("age", values.age)) {
@@ -669,8 +675,17 @@ const buildSearchQuery = (values) => {
       "Year to date": "received:thisyear",
     };
     if (ageMap[values.age]) {
-      terms.push(ageMap[values.age]);
+      strictTerms.push(ageMap[values.age]);
     }
+  }
+
+  const terms = [...strictTerms];
+  if (isNarrow) {
+    terms.push(...flexTerms);
+  } else if (flexTerms.length === 1) {
+    terms.push(flexTerms[0]);
+  } else if (flexTerms.length > 1) {
+    terms.push(`(${flexTerms.join(" OR ")})`);
   }
 
   return terms.join(" ") || "(no search terms)";

@@ -562,9 +562,15 @@ const buildSearchQuery = (values) => {
   const fromTerms = [];
   if (emailAddress) {
     fromTerms.push(`from:"${emailAddress}"`);
+    if (!isNarrow) {
+      flexTerms.push(wrapTerm(emailAddress));
+    }
   }
   if (personName) {
     fromTerms.push(`from:"${personName}"`);
+    if (!isNarrow) {
+      flexTerms.push(wrapTerm(personName));
+    }
   }
   if (fromTerms.length === 1) {
     flexTerms.push(fromTerms[0]);

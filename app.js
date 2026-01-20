@@ -544,12 +544,8 @@ const buildSearchQuery = (values) => {
     subjectOnly ? `subject:"${term}"` : `"${term}"`;
   const terms = [];
 
-  if (mailboxScope) {
-    if (mailboxScope === "All mailboxes") {
-      terms.push("scope:all");
-    } else {
-      terms.push(`folder:"${mailboxScope}"`);
-    }
+  if (mailboxScope && mailboxScope !== "All mailboxes") {
+    terms.push(`folder:"${mailboxScope}"`);
   }
 
   if (includeValue("senderFocus", values.senderFocus)) {

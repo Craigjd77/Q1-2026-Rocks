@@ -321,6 +321,15 @@ const ccFieldInput = document.getElementById("ccField");
 const emailAddressInput = document.getElementById("emailAddress");
 const personNameInput = document.getElementById("personName");
 const remittancePresetInput = document.getElementById("remittancePreset");
+const settlementNoticePresetInput = document.getElementById(
+  "settlementNoticePreset"
+);
+const claimsDeadlinePresetInput = document.getElementById(
+  "claimsDeadlinePreset"
+);
+const rejectionNoticePresetInput = document.getElementById(
+  "rejectionNoticePreset"
+);
 const filterUnreadInput = document.getElementById("filterUnread");
 const filterAttachmentsInput = document.getElementById("filterAttachments");
 const filterFlaggedInput = document.getElementById("filterFlagged");
@@ -331,6 +340,7 @@ const recipeList = document.getElementById("recipe-list");
 const badge = document.getElementById("selectionBadge");
 const generateButton = document.getElementById("generate");
 const saveFavoriteButton = document.getElementById("save-favorite");
+const clearFormButton = document.getElementById("clear-form");
 const favoritesList = document.getElementById("favorites-list");
 const favoritesEmpty = document.getElementById("favorites-empty");
 const favoritesCount = document.getElementById("favoritesCount");
@@ -418,6 +428,9 @@ const getCurrentSelections = () => ({
   emailAddress: emailAddressInput.value,
   personName: personNameInput.value,
   remittancePreset: remittancePresetInput.checked,
+  settlementNoticePreset: settlementNoticePresetInput.checked,
+  claimsDeadlinePreset: claimsDeadlinePresetInput.checked,
+  rejectionNoticePreset: rejectionNoticePresetInput.checked,
   filterUnread: filterUnreadInput.checked,
   filterAttachments: filterAttachmentsInput.checked,
   filterFlagged: filterFlaggedInput.checked,
@@ -460,13 +473,13 @@ const buildSummary = (values) => {
 
 const buildFilter = (values) => {
   const clientShortName = normalizeValue(values.clientShortName);
+  const mailboxScope = includeValue("mailboxScope", values.mailboxScope);
   const caseName = normalizeText(values.caseName);
   const folderPath = normalizeText(values.folderPath);
   const toField = normalizeText(values.toField);
   const ccField = normalizeText(values.ccField);
   const emailAddress = normalizeText(values.emailAddress);
   const personName = normalizeText(values.personName);
-  const mailboxScope = includeValue("mailboxScope", values.mailboxScope);
   const clientFullName =
     normalizeText(values.clientFullName) ||
     normalizeValue(values.clientShortName);
@@ -488,12 +501,15 @@ const buildFilter = (values) => {
     includeValue("topicFocus", values.topicFocus) &&
       `Topic="${values.topicFocus}"`,
     caseName && `Case="${caseName}"`,
-    folderPath && `Folder="${folderPath}"`,
+    folderPath && !folderPath.startsWith("[object") && `Folder="${folderPath}"`,
     toField && `To="${toField}"`,
     ccField && `CC="${ccField}"`,
     emailAddress && `From="${emailAddress}"`,
     personName && `From="${personName}"`,
     values.remittancePreset && `Template="Remittance Report"`,
+    values.settlementNoticePreset && `Template="Settlement Notice"`,
+    values.claimsDeadlinePreset && `Template="Claims Deadline"`,
+    values.rejectionNoticePreset && `Template="Rejection/Deficiency"`,
     quickFilters.length && `Quick="${quickFilters.join(", ")}"`,
     includeValue("caseStage", values.caseStage) && `Stage="${values.caseStage}"`,
     includeValue("jurisdiction", values.jurisdiction) &&
@@ -513,6 +529,7 @@ const buildFilter = (values) => {
 const buildSearchQuery = (values) => {
   const clientShortName = normalizeValue(values.clientShortName);
   const caseName = normalizeText(values.caseName);
+  const mailboxScope = includeValue("mailboxScope", values.mailboxScope);
   const folderPath = normalizeText(values.folderPath);
   const toField = normalizeText(values.toField);
   const ccField = normalizeText(values.ccField);
@@ -578,7 +595,25 @@ const buildSearchQuery = (values) => {
     }
     terms.push('from:"FRT-ClientSupport"');
   }
-  if (folderPath) {
+  if (values.settlementNoticePreset) {
+    terms.push('subject:"Settlement Notice"');
+    if (clientFullName) {
+      terms.push(wrapTerm(clientFullName));
+    }
+  }
+  if (values.claimsDeadlinePreset) {
+    terms.push('(subject:"Claims Deadline" OR subject:"Claim Deadline")');
+    if (clientFullName) {
+      terms.push(wrapTerm(clientFullName));
+    }
+  }
+  if (values.rejectionNoticePreset) {
+    terms.push('(subject:"Rejection" OR subject:"Deficiency")');
+    if (clientFullName) {
+      terms.push(wrapTerm(clientFullName));
+    }
+  }
+  if (folderPath && !folderPath.startsWith("[object")) {
     terms.push(`folder:"${folderPath}"`);
   }
   if (clientShortName) {
@@ -721,6 +756,9 @@ const setSelections = (values) => {
   emailAddressInput.value = values.emailAddress || "";
   personNameInput.value = values.personName || "";
   remittancePresetInput.checked = Boolean(values.remittancePreset);
+  settlementNoticePresetInput.checked = Boolean(values.settlementNoticePreset);
+  claimsDeadlinePresetInput.checked = Boolean(values.claimsDeadlinePreset);
+  rejectionNoticePresetInput.checked = Boolean(values.rejectionNoticePreset);
   filterUnreadInput.checked = Boolean(values.filterUnread);
   filterAttachmentsInput.checked = Boolean(values.filterAttachments);
   filterFlaggedInput.checked = Boolean(values.filterFlagged);
@@ -838,6 +876,51 @@ if (copyQueryButton) {
     if (queryOutput) {
       copyText(queryOutput.textContent);
     }
+  });
+}
+
+if (clearFormButton) {
+  clearFormButton.addEventListener("click", () => {
+    const defaultIncludes = new Set([
+      "mailboxScope",
+      "clientShortName",
+      "topicFocus",
+      "keywords",
+      "destination",
+    ]);
+    includeInputs.forEach((input) => {
+      input.checked = defaultIncludes.has(input.dataset.includeFor);
+    });
+
+    Object.values(fieldElements).forEach((field) => {
+      if (!field) return;
+      if (field.tagName === "SELECT") {
+        field.selectedIndex = 0;
+      } else {
+        field.value = "";
+      }
+    });
+
+    clientFullNameInput.value = "";
+    folderPathInput.value = "";
+    toFieldInput.value = "";
+    ccFieldInput.value = "";
+    emailAddressInput.value = "";
+    personNameInput.value = "";
+
+    remittancePresetInput.checked = false;
+    settlementNoticePresetInput.checked = false;
+    claimsDeadlinePresetInput.checked = false;
+    rejectionNoticePresetInput.checked = false;
+
+    filterUnreadInput.checked = false;
+    filterAttachmentsInput.checked = false;
+    filterFlaggedInput.checked = false;
+    filterMentionsInput.checked = false;
+    filterToMeInput.checked = false;
+
+    fieldElements.mailboxScope.value = "All mailboxes";
+    buildRecipes();
   });
 }
 

@@ -442,6 +442,7 @@ const buildSummary = (values) => {
     normalizeText(values.clientShortNameCustom) ||
     includeValue("clientShortName", values.clientShortName);
   const caseName = normalizeText(values.caseName);
+  const mailboxScope = includeValue("mailboxScope", values.mailboxScope);
   const topicFocus = includeValue("topicFocus", values.topicFocus);
   const folderPath = normalizeText(values.folderPath);
   const parts = [
@@ -530,6 +531,14 @@ const buildSearchQuery = (values) => {
   const wrapTerm = (term) =>
     subjectOnly ? `subject:"${term}"` : `"${term}"`;
   const terms = [];
+
+  if (mailboxScope) {
+    if (mailboxScope === "All mailboxes") {
+      terms.push("scope:all");
+    } else {
+      terms.push(`folder:"${mailboxScope}"`);
+    }
+  }
 
   if (includeValue("senderFocus", values.senderFocus)) {
     terms.push(`from:"${values.senderFocus}"`);

@@ -56,13 +56,14 @@
                 id="mailboxScope"
                 type="text"
                 list="mailboxScopeList"
-                placeholder="Start typing"
+                placeholder="Start typing or enter a custom path"
                 autocomplete="off"
               />
               <datalist id="mailboxScopeList"></datalist>
+              <small class="helper">Use your actual folder path if it differs.</small>
             </label>
             <label>
-              <span>Client Name</span>
+              <span>Client Short Name</span>
               <span class="lock">
                 <input type="checkbox" data-lock-for="clientShortName" checked />
                 Don't shuffle
@@ -71,17 +72,25 @@
                 id="clientShortName"
                 type="text"
                 list="clientShortNameList"
-                placeholder="e.g., Vanguard or Norges Bank"
+                placeholder="e.g., CSIM or NORGES"
                 autocomplete="off"
               />
               <datalist id="clientShortNameList"></datalist>
             </label>
             <label>
-              <span>Client Name (Custom)</span>
+              <span>Client Short Name (Custom)</span>
               <input
                 id="clientShortNameCustom"
                 type="text"
-                placeholder="e.g., Vanguard or Norges Bank"
+                placeholder="e.g., CSIM or NORGES"
+              />
+            </label>
+            <label>
+              <span>Client Full Name</span>
+              <input
+                id="clientFullName"
+                type="text"
+                placeholder="e.g., Vanguard Group"
               />
             </label>
             <label>
@@ -149,6 +158,7 @@
             </label>
             <div class="quick-filters">
               <span>Quick Filters</span>
+              <small>Flagged and Mentions work best in Outlook Web.</small>
               <div class="toggle-grid">
                 <label class="toggle">
                   <input id="filterUnread" type="checkbox" />
@@ -160,15 +170,25 @@
                 </label>
                 <label class="toggle">
                   <input id="filterFlagged" type="checkbox" />
-                  Flagged
+                  Flagged (Web)
                 </label>
                 <label class="toggle">
                   <input id="filterMentions" type="checkbox" />
-                  Mentions me
+                  Mentions me (Web)
                 </label>
                 <label class="toggle">
                   <input id="filterToMe" type="checkbox" />
                   To me
+                </label>
+              </div>
+            </div>
+            <div class="quick-filters template-filters">
+              <span>Common Templates</span>
+              <small>Use when the subject and sender follow a fixed pattern.</small>
+              <div class="toggle-grid">
+                <label class="toggle">
+                  <input id="remittancePreset" type="checkbox" />
+                  Remittance Report (FRT-ClientSupport)
                 </label>
               </div>
             </div>
@@ -339,6 +359,15 @@
           <div class="card-header">
             <h2>Search Strings</h2>
             <div class="badge" id="selectionBadge">Selections ready</div>
+          </div>
+          <div class="query-output">
+            <div>
+              <p class="helper">Search query</p>
+              <pre id="queryOutput"></pre>
+            </div>
+            <button id="copyQueryButton" class="small-button" type="button">
+              Copy query
+            </button>
           </div>
           <ol id="recipe-list" class="prompt-list"></ol>
         </section>

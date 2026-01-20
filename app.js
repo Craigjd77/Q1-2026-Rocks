@@ -345,12 +345,14 @@ const recipeTemplates = [
 const clientShortNameCustomInput = document.getElementById(
   "clientShortNameCustom"
 );
+const clientFullNameInput = document.getElementById("clientFullName");
 const caseNameInput = document.getElementById("caseName");
 const folderPathInput = document.getElementById("folderPath");
 const toFieldInput = document.getElementById("toField");
 const ccFieldInput = document.getElementById("ccField");
 const emailAddressInput = document.getElementById("emailAddress");
 const personNameInput = document.getElementById("personName");
+const remittancePresetInput = document.getElementById("remittancePreset");
 const filterUnreadInput = document.getElementById("filterUnread");
 const filterAttachmentsInput = document.getElementById("filterAttachments");
 const filterFlaggedInput = document.getElementById("filterFlagged");
@@ -365,6 +367,8 @@ const saveFavoriteButton = document.getElementById("save-favorite");
 const favoritesList = document.getElementById("favorites-list");
 const favoritesEmpty = document.getElementById("favorites-empty");
 const favoritesCount = document.getElementById("favoritesCount");
+const queryOutput = document.getElementById("queryOutput");
+const copyQueryButton = document.getElementById("copyQueryButton");
 
 const FAVORITES_KEY = "frtOutlookFavorites";
 const lockInputs = Array.from(document.querySelectorAll("[data-lock-for]"));
@@ -431,11 +435,13 @@ const getCurrentSelections = () => ({
   mailboxScope: fieldElements.mailboxScope.value,
   clientShortName: fieldElements.clientShortName.value,
   clientShortNameCustom: clientShortNameCustomInput.value,
+  clientFullName: clientFullNameInput.value,
   folderPath: folderPathInput.value,
   toField: toFieldInput.value,
   ccField: ccFieldInput.value,
   emailAddress: emailAddressInput.value,
   personName: personNameInput.value,
+  remittancePreset: remittancePresetInput.checked,
   filterUnread: filterUnreadInput.checked,
   filterAttachments: filterAttachmentsInput.checked,
   filterFlagged: filterFlaggedInput.checked,
@@ -487,6 +493,10 @@ const buildFilter = (values) => {
   const ccField = normalizeText(values.ccField);
   const emailAddress = normalizeText(values.emailAddress);
   const personName = normalizeText(values.personName);
+  const clientFullName =
+    normalizeText(values.clientFullName) ||
+    normalizeText(values.clientShortNameCustom) ||
+    normalizeValue(values.clientShortName);
   const quickFilters = [
     values.filterUnread && "Unread",
     values.filterAttachments && "Has attachments",
@@ -506,6 +516,7 @@ const buildFilter = (values) => {
     ccField && `CC="${ccField}"`,
     emailAddress && `From="${emailAddress}"`,
     personName && `From="${personName}"`,
+    values.remittancePreset && `Template="Remittance Report"`,
     quickFilters.length && `Quick="${quickFilters.join(", ")}"`,
     normalizeValue(values.caseStage) && `Stage="${values.caseStage}"`,
     normalizeValue(values.jurisdiction) && `Court="${values.jurisdiction}"`,
@@ -529,6 +540,10 @@ const buildSearchQuery = (values) => {
   const ccField = normalizeText(values.ccField);
   const emailAddress = normalizeText(values.emailAddress);
   const personName = normalizeText(values.personName);
+  const clientFullName =
+    normalizeText(values.clientFullName) ||
+    normalizeText(values.clientShortNameCustom) ||
+    normalizeValue(values.clientShortName);
   const isNarrow = values.searchMode === "Narrow search";
   const subjectOnly = values.searchField === "Subject only";
   const wrapTerm = (term) =>
@@ -571,6 +586,12 @@ const buildSearchQuery = (values) => {
   }
   if (values.filterToMe) {
     terms.push("to:me");
+  }
+  if (values.remittancePreset) {
+    if (clientFullName) {
+      terms.push(`subject:"Remittance Report - ${clientFullName}"`);
+    }
+    terms.push('from:"FRT-ClientSupport"');
   }
   if (folderPath) {
     terms.push(`folder:"${folderPath}"`);
@@ -660,6 +681,10 @@ const buildRecipes = () => {
   const summary = buildSummary(values);
   const searchQuery = buildSearchQuery(values);
 
+  if (queryOutput) {
+    queryOutput.textContent = searchQuery;
+  }
+
   recipeList.innerHTML = "";
   recipeTemplates.forEach((template, index) => {
     const recipe = template({ summary, searchQuery });
@@ -706,11 +731,13 @@ const setSelections = (values) => {
   fieldElements.mailboxScope.value = values.mailboxScope;
   fieldElements.clientShortName.value = values.clientShortName;
   clientShortNameCustomInput.value = values.clientShortNameCustom || "";
+  clientFullNameInput.value = values.clientFullName || "";
   folderPathInput.value = values.folderPath || "";
   toFieldInput.value = values.toField || "";
   ccFieldInput.value = values.ccField || "";
   emailAddressInput.value = values.emailAddress || "";
   personNameInput.value = values.personName || "";
+  remittancePresetInput.checked = Boolean(values.remittancePreset);
   filterUnreadInput.checked = Boolean(values.filterUnread);
   filterAttachmentsInput.checked = Boolean(values.filterAttachments);
   filterFlaggedInput.checked = Boolean(values.filterFlagged);
@@ -878,6 +905,14 @@ const shuffleSelections = () => {
 loadOptions();
 buildRecipes();
 renderFavorites();
+
+if (copyQueryButton) {
+  copyQueryButton.addEventListener("click", () => {
+    if (queryOutput) {
+      copyText(queryOutput.textContent);
+    }
+  });
+}
 
 generateButton.addEventListener("click", (event) => {
   event.preventDefault();

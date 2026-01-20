@@ -192,6 +192,14 @@ h2 {
   font-size: 13px;
 }
 
+.quick-filters small {
+  color: var(--muted);
+}
+
+.template-filters {
+  background: #f3f7fb;
+}
+
 .quick-filters > span:first-child {
   font-weight: 600;
   color: var(--ink);
@@ -336,6 +344,26 @@ button {
   margin: 0;
   display: grid;
   gap: 14px;
+}
+
+.query-output {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: #f9fbfd;
+  margin-bottom: 16px;
+}
+
+.query-output pre {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  color: var(--ink);
 }
 
 .prompt-item {

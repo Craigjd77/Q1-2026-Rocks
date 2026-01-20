@@ -43,14 +43,15 @@
         <section class="card">
           <h2>Search Builder</h2>
           <p class="helper">
-            Start typing to filter suggestions. Use “Don’t shuffle” to lock a field.
+            Start typing to filter suggestions. Use the checkbox to include or
+            exclude a field from the search.
           </p>
           <form id="criteria-form" class="grid">
             <label>
               <span>Mailbox Scope</span>
               <span class="lock">
-                <input type="checkbox" data-lock-for="mailboxScope" checked />
-                Don't shuffle
+                <input type="checkbox" data-include-for="mailboxScope" checked />
+                Include
               </span>
               <input
                 id="mailboxScope"
@@ -65,8 +66,8 @@
             <label>
               <span>Client Short Name</span>
               <span class="lock">
-                <input type="checkbox" data-lock-for="clientShortName" checked />
-                Don't shuffle
+                <input type="checkbox" data-include-for="clientShortName" checked />
+                Include
               </span>
               <input
                 id="clientShortName"
@@ -128,8 +129,8 @@
             <label>
               <span>Topic Focus</span>
               <span class="lock">
-                <input type="checkbox" data-lock-for="topicFocus" checked />
-                Don't shuffle
+                <input type="checkbox" data-include-for="topicFocus" checked />
+                Include
               </span>
               <input
                 id="topicFocus"
@@ -195,8 +196,8 @@
             <label>
               <span>Keywords Bundle</span>
               <span class="lock">
-                <input type="checkbox" data-lock-for="keywords" checked />
-                Don't shuffle
+                <input type="checkbox" data-include-for="keywords" checked />
+                Include
               </span>
               <input
                 id="keywords"
@@ -210,8 +211,8 @@
             <label>
               <span>Folder Destination</span>
               <span class="lock">
-                <input type="checkbox" data-lock-for="destination" checked />
-                Don't shuffle
+                <input type="checkbox" data-include-for="destination" checked />
+                Include
               </span>
               <input
                 id="destination"
@@ -228,8 +229,8 @@
                 <label>
                   <span>Client Type</span>
                   <span class="lock">
-                    <input type="checkbox" data-lock-for="clientType" checked />
-                    Don't shuffle
+                    <input type="checkbox" data-include-for="clientType" />
+                    Include
                   </span>
                   <input
                     id="clientType"
@@ -243,8 +244,8 @@
                 <label>
                   <span>Case Stage</span>
                   <span class="lock">
-                    <input type="checkbox" data-lock-for="caseStage" checked />
-                    Don't shuffle
+                    <input type="checkbox" data-include-for="caseStage" />
+                    Include
                   </span>
                   <input
                     id="caseStage"
@@ -258,8 +259,8 @@
                 <label>
                   <span>Jurisdiction</span>
                   <span class="lock">
-                    <input type="checkbox" data-lock-for="jurisdiction" checked />
-                    Don't shuffle
+                    <input type="checkbox" data-include-for="jurisdiction" />
+                    Include
                   </span>
                   <input
                     id="jurisdiction"
@@ -273,8 +274,8 @@
                 <label>
                   <span>Client Priority</span>
                   <span class="lock">
-                    <input type="checkbox" data-lock-for="priority" checked />
-                    Don't shuffle
+                    <input type="checkbox" data-include-for="priority" />
+                    Include
                   </span>
                   <input
                     id="priority"
@@ -288,8 +289,8 @@
                 <label>
                   <span>Message Age</span>
                   <span class="lock">
-                    <input type="checkbox" data-lock-for="age" checked />
-                    Don't shuffle
+                    <input type="checkbox" data-include-for="age" />
+                    Include
                   </span>
                   <input
                     id="age"
@@ -303,8 +304,8 @@
                 <label>
                   <span>Sender Focus</span>
                   <span class="lock">
-                    <input type="checkbox" data-lock-for="senderFocus" checked />
-                    Don't shuffle
+                    <input type="checkbox" data-include-for="senderFocus" />
+                    Include
                   </span>
                   <input
                     id="senderFocus"
@@ -318,8 +319,8 @@
                 <label>
                   <span>Attachment Filter</span>
                   <span class="lock">
-                    <input type="checkbox" data-lock-for="attachments" checked />
-                    Don't shuffle
+                    <input type="checkbox" data-include-for="attachments" />
+                    Include
                   </span>
                   <input
                     id="attachments"
@@ -333,8 +334,8 @@
                 <label>
                   <span>Exclusions</span>
                   <span class="lock">
-                    <input type="checkbox" data-lock-for="exclusions" checked />
-                    Don't shuffle
+                    <input type="checkbox" data-include-for="exclusions" />
+                    Include
                   </span>
                   <input
                     id="exclusions"
@@ -350,7 +351,6 @@
           </form>
           <div class="actions">
             <button id="generate" class="primary">Generate Search</button>
-            <button id="shuffle" class="ghost">Shuffle Suggestions</button>
             <button id="save-favorite" class="ghost">Save to Favorites</button>
           </div>
         </section>

@@ -2,43 +2,14 @@ const data = {
   mailboxScope: [
     "All mailboxes",
     "Inbox",
-    "Primary inbox",
-    "Active Clients",
-    "Active Clients \u2192 CSIM",
-    "Active Clients \u2192 FRM/MAN",
-    "Active Clients \u2192 GTC",
-    "Active Clients \u2192 HP",
-    "Active Clients \u2192 IBM",
-    "Active Clients \u2192 Intel",
-    "Active Clients \u2192 LoCorr",
-    "Active Clients \u2192 Norges",
-    "Active Clients \u2192 PNC Bank",
-    "Active Clients \u2192 CSIM \u2192 Billing",
-    "Active Clients \u2192 CSIM \u2192 Remittance",
-    "Active Clients \u2192 CSIM \u2192 Opt-in tracking",
-    "Shared client mailbox",
+    "Shared mailbox",
+    "Team mailbox",
+    "Client folders",
     "FRT \u2192 Clients",
     "FRT \u2192 Claims Deadlines",
     "FRT \u2192 Settlement Notices",
     "FRT \u2192 Team Updates",
     "FRT \u2192 Legal Updates",
-    "FRT \u2192 Monitoring Alerts",
-    "Litigation team shared",
-    "Class action intake",
-    "Claims operations",
-    "Legal notices",
-    "Client service",
-    "Compliance",
-    "Executive updates",
-    "Settlements tracking",
-    "Research mailbox",
-    "Case onboarding",
-    "Finance approvals",
-    "Escalations",
-    "RFPs and proposals",
-    "Custodian inquiries",
-    "External counsel",
-    "Vendor coordination",
   ],
   clientShortName: [
     "CSIM",
@@ -362,7 +333,6 @@ const filterToMeInput = document.getElementById("filterToMe");
 const recipeList = document.getElementById("recipe-list");
 const badge = document.getElementById("selectionBadge");
 const generateButton = document.getElementById("generate");
-const shuffleButton = document.getElementById("shuffle");
 const saveFavoriteButton = document.getElementById("save-favorite");
 const favoritesList = document.getElementById("favorites-list");
 const favoritesEmpty = document.getElementById("favorites-empty");
@@ -371,9 +341,11 @@ const queryOutput = document.getElementById("queryOutput");
 const copyQueryButton = document.getElementById("copyQueryButton");
 
 const FAVORITES_KEY = "frtOutlookFavorites";
-const lockInputs = Array.from(document.querySelectorAll("[data-lock-for]"));
-const isLocked = (id) =>
-  lockInputs.find((input) => input.dataset.lockFor === id)?.checked;
+const includeInputs = Array.from(
+  document.querySelectorAll("[data-include-for]")
+);
+const isIncluded = (id) =>
+  includeInputs.find((input) => input.dataset.includeFor === id)?.checked;
 
 const fillSelect = (select, options) => {
   select.innerHTML = "";
@@ -422,6 +394,8 @@ const loadOptions = () => {
 
 const normalizeValue = (value) => (value ? value.trim() : "");
 const normalizeText = (value) => value.trim();
+const includeValue = (id, value) =>
+  isIncluded(id) ? normalizeValue(value) : "";
 
 const getClientShortName = () => {
   const custom = normalizeText(clientShortNameCustomInput.value);
@@ -466,18 +440,18 @@ const getCurrentSelections = () => ({
 const buildSummary = (values) => {
   const clientShortName =
     normalizeText(values.clientShortNameCustom) ||
-    normalizeValue(values.clientShortName);
+    includeValue("clientShortName", values.clientShortName);
   const caseName = normalizeText(values.caseName);
-  const topicFocus = normalizeValue(values.topicFocus);
+  const topicFocus = includeValue("topicFocus", values.topicFocus);
   const folderPath = normalizeText(values.folderPath);
   const parts = [
-    normalizeValue(values.destination) && `${values.destination}`,
+    includeValue("destination", values.destination) && `${values.destination}`,
     folderPath && `Folder ${folderPath}`,
     clientShortName,
     caseName,
     topicFocus,
-    normalizeValue(values.caseStage) && `${values.caseStage}`,
-    normalizeValue(values.clientType) && `${values.clientType}`,
+    includeValue("caseStage", values.caseStage) && `${values.caseStage}`,
+    includeValue("clientType", values.clientType) && `${values.clientType}`,
   ].filter(Boolean);
 
   return parts.length ? parts.join(" \u2022 ") : "FRT Outlook Search Folder";
@@ -505,11 +479,15 @@ const buildFilter = (values) => {
     values.filterToMe && "To me",
   ].filter(Boolean);
   const parts = [
-    normalizeValue(values.mailboxScope) && `Scope="${values.mailboxScope}"`,
-    normalizeValue(values.senderFocus) && `From="${values.senderFocus}"`,
+    includeValue("mailboxScope", values.mailboxScope) &&
+      `Scope="${values.mailboxScope}"`,
+    includeValue("senderFocus", values.senderFocus) &&
+      `From="${values.senderFocus}"`,
     clientShortName && `ClientShort="${clientShortName}"`,
-    normalizeValue(values.clientType) && `ClientType="${values.clientType}"`,
-    normalizeValue(values.topicFocus) && `Topic="${values.topicFocus}"`,
+    includeValue("clientType", values.clientType) &&
+      `ClientType="${values.clientType}"`,
+    includeValue("topicFocus", values.topicFocus) &&
+      `Topic="${values.topicFocus}"`,
     caseName && `Case="${caseName}"`,
     folderPath && `Folder="${folderPath}"`,
     toField && `To="${toField}"`,
@@ -518,13 +496,16 @@ const buildFilter = (values) => {
     personName && `From="${personName}"`,
     values.remittancePreset && `Template="Remittance Report"`,
     quickFilters.length && `Quick="${quickFilters.join(", ")}"`,
-    normalizeValue(values.caseStage) && `Stage="${values.caseStage}"`,
-    normalizeValue(values.jurisdiction) && `Court="${values.jurisdiction}"`,
-    normalizeValue(values.priority) && `Priority="${values.priority}"`,
-    normalizeValue(values.age) && `Received="${values.age}"`,
-    normalizeValue(values.keywords) && `Keywords="${values.keywords}"`,
-    normalizeValue(values.attachments) && `Attachments="${values.attachments}"`,
-    normalizeValue(values.exclusions) && `Exclude="${values.exclusions}"`,
+    includeValue("caseStage", values.caseStage) && `Stage="${values.caseStage}"`,
+    includeValue("jurisdiction", values.jurisdiction) &&
+      `Court="${values.jurisdiction}"`,
+    includeValue("priority", values.priority) && `Priority="${values.priority}"`,
+    includeValue("age", values.age) && `Received="${values.age}"`,
+    includeValue("keywords", values.keywords) && `Keywords="${values.keywords}"`,
+    includeValue("attachments", values.attachments) &&
+      `Attachments="${values.attachments}"`,
+    includeValue("exclusions", values.exclusions) &&
+      `Exclude="${values.exclusions}"`,
   ].filter(Boolean);
 
   return parts.join(" AND ") || "(No filters selected)";
@@ -550,7 +531,7 @@ const buildSearchQuery = (values) => {
     subjectOnly ? `subject:"${term}"` : `"${term}"`;
   const terms = [];
 
-  if (normalizeValue(values.senderFocus)) {
+  if (includeValue("senderFocus", values.senderFocus)) {
     terms.push(`from:"${values.senderFocus}"`);
   }
   if (toField) {
@@ -599,19 +580,19 @@ const buildSearchQuery = (values) => {
   if (clientShortName) {
     terms.push(wrapTerm(clientShortName));
   }
-  if (normalizeValue(values.topicFocus)) {
+  if (includeValue("topicFocus", values.topicFocus)) {
     terms.push(wrapTerm(values.topicFocus));
   }
   if (caseName) {
     terms.push(wrapTerm(caseName));
   }
-  if (normalizeValue(values.caseStage)) {
+  if (includeValue("caseStage", values.caseStage)) {
     terms.push(wrapTerm(values.caseStage));
   }
-  if (normalizeValue(values.jurisdiction)) {
+  if (includeValue("jurisdiction", values.jurisdiction)) {
     terms.push(wrapTerm(values.jurisdiction));
   }
-  if (normalizeValue(values.keywords)) {
+  if (includeValue("keywords", values.keywords)) {
     const keywordTerms = values.keywords
       .split(",")
       .map((term) => term.trim())
@@ -623,7 +604,7 @@ const buildSearchQuery = (values) => {
       );
     }
   }
-  if (normalizeValue(values.attachments)) {
+  if (includeValue("attachments", values.attachments)) {
     const attachmentMap = {
       "Has PDF attachments": "ext:pdf",
       "Has Excel attachments": "(ext:xls OR ext:xlsx)",
@@ -641,7 +622,7 @@ const buildSearchQuery = (values) => {
       terms.push(attachmentMap[values.attachments]);
     }
   }
-  if (normalizeValue(values.age)) {
+  if (includeValue("age", values.age)) {
     const ageMap = {
       "Last 24 hours": "received:today",
       "This week": "received:thisweek",
@@ -849,59 +830,6 @@ const saveFavorite = () => {
   renderFavorites();
 };
 
-const randomItem = (items) => items[Math.floor(Math.random() * items.length)];
-
-const shuffleSelections = () => {
-  const ignoreLocks = !lockInputs.some((input) => !input.checked);
-  const isFieldLocked = (id) => !ignoreLocks && isLocked(id);
-  if (!isFieldLocked("mailboxScope")) {
-    fieldElements.mailboxScope.value = randomItem(data.mailboxScope);
-  }
-  if (!isFieldLocked("clientShortName")) {
-    fieldElements.clientShortName.value = randomItem(data.clientShortName);
-  }
-  if (!isFieldLocked("clientType")) {
-    fieldElements.clientType.value = randomItem(data.clientType);
-  }
-  if (!isFieldLocked("topicFocus")) {
-    fieldElements.topicFocus.value = randomItem(data.topicFocus);
-  }
-  if (!isFieldLocked("caseStage")) {
-    fieldElements.caseStage.value = randomItem(data.caseStage);
-  }
-  if (!isFieldLocked("jurisdiction")) {
-    fieldElements.jurisdiction.value = randomItem(data.jurisdiction);
-  }
-  if (!isFieldLocked("priority")) {
-    fieldElements.priority.value = randomItem(data.priority);
-  }
-  if (!isFieldLocked("age")) {
-    fieldElements.age.value = randomItem(data.age);
-  }
-  if (!isFieldLocked("senderFocus")) {
-    fieldElements.senderFocus.value = randomItem(data.senderFocus);
-  }
-  if (!isFieldLocked("keywords")) {
-    fieldElements.keywords.value = randomItem(data.keywords);
-  }
-  if (!isFieldLocked("attachments")) {
-    fieldElements.attachments.value = randomItem(data.attachments);
-  }
-  if (!isFieldLocked("exclusions")) {
-    fieldElements.exclusions.value = randomItem(data.exclusions);
-  }
-  if (!isFieldLocked("destination")) {
-    fieldElements.destination.value = randomItem(data.destination);
-  }
-  if (!isFieldLocked("searchMode")) {
-    fieldElements.searchMode.value = randomItem(data.searchMode);
-  }
-  if (!isFieldLocked("searchField")) {
-    fieldElements.searchField.value = randomItem(data.searchField);
-  }
-  buildRecipes();
-};
-
 loadOptions();
 buildRecipes();
 renderFavorites();
@@ -917,11 +845,6 @@ if (copyQueryButton) {
 generateButton.addEventListener("click", (event) => {
   event.preventDefault();
   buildRecipes();
-});
-
-shuffleButton.addEventListener("click", (event) => {
-  event.preventDefault();
-  shuffleSelections();
 });
 
 saveFavoriteButton.addEventListener("click", (event) => {

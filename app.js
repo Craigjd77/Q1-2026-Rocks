@@ -461,46 +461,6 @@ const loadPresets = async () => {
   }
 };
 
-const quickPickConfig = {
-  clientFullName: () => data.clientFullName,
-  caseName: () => data.caseName,
-  topicFocus: () => data.topicFocus,
-};
-
-const renderQuickPicks = (fieldId) => {
-  const container = document.querySelector(`[data-picks-for="${fieldId}"]`);
-  const input = document.getElementById(fieldId);
-  const getList = quickPickConfig[fieldId];
-  if (!container || !input || !getList) return;
-
-  const rawValue = normalizeValue(input.value).toLowerCase();
-  let items = getList();
-  if (rawValue) {
-    items = items.filter((item) =>
-      normalizeValue(item).toLowerCase().includes(rawValue)
-    );
-  }
-  items = items.slice(0, 20);
-
-  container.innerHTML = "";
-  items.forEach((item) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "quick-pick";
-    button.textContent = item;
-    button.addEventListener("click", () => {
-      input.value = item;
-      buildRecipes();
-      renderQuickPicks(fieldId);
-    });
-    container.appendChild(button);
-  });
-};
-
-const renderAllQuickPicks = () => {
-  Object.keys(quickPickConfig).forEach(renderQuickPicks);
-};
-
 let wordCloudData = null;
 
 const loadWordCloud = async () => {
@@ -519,9 +479,9 @@ const buildCloudItems = (items) => {
   const min = Math.min(...counts);
   const max = Math.max(...counts);
   return items.map((item) => {
-    let size = 14;
+    let size = 12;
     if (max > min) {
-      size = 12 + ((item.count - min) / (max - min)) * 12;
+      size = 12 + ((item.count - min) / (max - min)) * 18;
     }
     return { ...item, size: Math.round(size) };
   });
@@ -1025,12 +985,6 @@ const init = async () => {
   await loadWordCloud();
   buildRecipes();
   renderFavorites();
-  renderAllQuickPicks();
-  Object.keys(quickPickConfig).forEach((fieldId) => {
-    const input = document.getElementById(fieldId);
-    if (!input) return;
-    input.addEventListener("input", () => renderQuickPicks(fieldId));
-  });
   document.querySelectorAll("[data-cloud-for]").forEach((button) => {
     button.addEventListener("click", () => {
       const fieldId = button.dataset.cloudFor;

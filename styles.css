@@ -366,28 +366,6 @@ button {
   color: var(--ink);
 }
 
-.quick-picks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.quick-pick {
-  border: 1px solid var(--border);
-  background: #ffffff;
-  color: var(--ink);
-  border-radius: 999px;
-  font-size: 12px;
-  padding: 4px 10px;
-  cursor: pointer;
-}
-
-.quick-pick:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
 .field-head {
   display: flex;
   align-items: center;
@@ -413,12 +391,13 @@ button {
 .cloud-panel {
   display: none;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px 10px;
   margin-top: 8px;
-  padding: 10px;
-  border: 1px dashed var(--border);
-  border-radius: 10px;
-  background: #f9fbfd;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
 }
 
 .cloud-panel.show {
@@ -431,6 +410,7 @@ button {
   color: var(--ink);
   cursor: pointer;
   padding: 2px 4px;
+  line-height: 1.1;
 }
 
 .cloud-item:hover {

@@ -441,6 +441,13 @@ const applyPresets = (presets) => {
   );
   data.caseName = mergeList(data.caseName, presets.caseName);
   data.topicFocus = mergeList(data.topicFocus, presets.topicFocus);
+
+  data.clientFullName = data.clientFullName.sort((a, b) =>
+    a.localeCompare(b)
+  );
+  data.clientShortName = data.clientShortName.sort((a, b) =>
+    a.localeCompare(b)
+  );
 };
 
 const loadPresets = async () => {
@@ -452,6 +459,46 @@ const loadPresets = async () => {
   } catch (error) {
     // Ignore missing presets; base lists still work.
   }
+};
+
+const quickPickConfig = {
+  clientFullName: () => data.clientFullName,
+  caseName: () => data.caseName,
+  topicFocus: () => data.topicFocus,
+};
+
+const renderQuickPicks = (fieldId) => {
+  const container = document.querySelector(`[data-picks-for="${fieldId}"]`);
+  const input = document.getElementById(fieldId);
+  const getList = quickPickConfig[fieldId];
+  if (!container || !input || !getList) return;
+
+  const rawValue = normalizeValue(input.value).toLowerCase();
+  let items = getList();
+  if (rawValue) {
+    items = items.filter((item) =>
+      normalizeValue(item).toLowerCase().includes(rawValue)
+    );
+  }
+  items = items.slice(0, 20);
+
+  container.innerHTML = "";
+  items.forEach((item) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "quick-pick";
+    button.textContent = item;
+    button.addEventListener("click", () => {
+      input.value = item;
+      buildRecipes();
+      renderQuickPicks(fieldId);
+    });
+    container.appendChild(button);
+  });
+};
+
+const renderAllQuickPicks = () => {
+  Object.keys(quickPickConfig).forEach(renderQuickPicks);
 };
 
 const getCaseName = () => normalizeText(caseNameInput.value);
@@ -928,6 +975,12 @@ const init = async () => {
   loadOptions();
   buildRecipes();
   renderFavorites();
+  renderAllQuickPicks();
+  Object.keys(quickPickConfig).forEach((fieldId) => {
+    const input = document.getElementById(fieldId);
+    if (!input) return;
+    input.addEventListener("input", () => renderQuickPicks(fieldId));
+  });
 };
 
 init();

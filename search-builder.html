@@ -72,6 +72,7 @@
                 placeholder="e.g., Vanguard Group"
               />
               <datalist id="clientFullNameList"></datalist>
+              <div class="quick-picks" data-picks-for="clientFullName"></div>
             </label>
             <label>
               <span>Client Short Name</span>
@@ -126,6 +127,7 @@
                 autocomplete="off"
               />
               <datalist id="topicFocusList"></datalist>
+              <div class="quick-picks" data-picks-for="topicFocus"></div>
             </label>
             <label>
               <span>Case / Settlement Name</span>
@@ -136,6 +138,7 @@
                 placeholder="e.g., ABC Securities Settlement"
               />
               <datalist id="caseNameList"></datalist>
+              <div class="quick-picks" data-picks-for="caseName"></div>
             </label>
             <details class="advanced">
               <summary>Advanced filters</summary>
@@ -372,6 +375,9 @@
           <div class="query-output">
             <div>
               <p class="helper">Search query</p>
+              <p class="helper">
+                Outlook tip: set scope to “All Mailboxes” before pasting.
+              </p>
               <pre id="queryOutput"></pre>
             </div>
             <button id="copyQueryButton" class="small-button" type="button">

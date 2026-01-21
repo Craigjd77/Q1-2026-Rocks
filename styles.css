@@ -366,6 +366,28 @@ button {
   color: var(--ink);
 }
 
+.quick-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.quick-pick {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--ink);
+  border-radius: 999px;
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.quick-pick:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .prompt-item {
   border: 1px solid var(--border);
   border-radius: 12px;

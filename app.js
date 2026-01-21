@@ -501,6 +501,55 @@ const renderAllQuickPicks = () => {
   Object.keys(quickPickConfig).forEach(renderQuickPicks);
 };
 
+let wordCloudData = null;
+
+const loadWordCloud = async () => {
+  try {
+    const response = await fetch("data/wordcloud.json", { cache: "no-store" });
+    if (!response.ok) return;
+    wordCloudData = await response.json();
+  } catch (error) {
+    wordCloudData = null;
+  }
+};
+
+const buildCloudItems = (items) => {
+  if (!items || !items.length) return [];
+  const counts = items.map((item) => item.count);
+  const min = Math.min(...counts);
+  const max = Math.max(...counts);
+  return items.map((item) => {
+    let size = 14;
+    if (max > min) {
+      size = 12 + ((item.count - min) / (max - min)) * 12;
+    }
+    return { ...item, size: Math.round(size) };
+  });
+};
+
+const renderWordCloud = (fieldId) => {
+  if (!wordCloudData) return;
+  const panel = document.querySelector(`[data-cloud-panel="${fieldId}"]`);
+  const input = document.getElementById(fieldId);
+  const items = buildCloudItems(wordCloudData[fieldId]);
+  if (!panel || !input) return;
+
+  panel.innerHTML = "";
+  items.forEach((item) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "cloud-item";
+    btn.textContent = item.value;
+    btn.style.fontSize = `${item.size}px`;
+    btn.addEventListener("click", () => {
+      input.value = item.value;
+      buildRecipes();
+      panel.classList.remove("show");
+    });
+    panel.appendChild(btn);
+  });
+};
+
 const getCaseName = () => normalizeText(caseNameInput.value);
 
 const getCurrentSelections = () => ({
@@ -973,6 +1022,7 @@ const init = async () => {
   loadOptions();
   await loadPresets();
   loadOptions();
+  await loadWordCloud();
   buildRecipes();
   renderFavorites();
   renderAllQuickPicks();
@@ -980,6 +1030,19 @@ const init = async () => {
     const input = document.getElementById(fieldId);
     if (!input) return;
     input.addEventListener("input", () => renderQuickPicks(fieldId));
+  });
+  document.querySelectorAll("[data-cloud-for]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const fieldId = button.dataset.cloudFor;
+      const panel = document.querySelector(
+        `[data-cloud-panel="${fieldId}"]`
+      );
+      if (!panel) return;
+      if (!panel.classList.contains("show")) {
+        renderWordCloud(fieldId);
+      }
+      panel.classList.toggle("show");
+    });
   });
 };
 

@@ -388,6 +388,55 @@ button {
   color: var(--accent);
 }
 
+.field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cloud-trigger {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--muted);
+  border-radius: 999px;
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.cloud-trigger:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.cloud-panel {
+  display: none;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  background: #f9fbfd;
+}
+
+.cloud-panel.show {
+  display: flex;
+}
+
+.cloud-item {
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.cloud-item:hover {
+  color: var(--accent);
+}
+
 .prompt-item {
   border: 1px solid var(--border);
   border-radius: 12px;

@@ -64,7 +64,17 @@
               <small class="helper">Use your actual folder path if it differs.</small>
             </label>
             <label>
-              <span>Client Full Name</span>
+              <div class="field-head">
+                <span>Client Full Name</span>
+                <button
+                  type="button"
+                  class="cloud-trigger"
+                  data-cloud-for="clientFullName"
+                  title="Top activity"
+                >
+                  Top
+                </button>
+              </div>
               <input
                 id="clientFullName"
                 type="text"
@@ -73,6 +83,7 @@
               />
               <datalist id="clientFullNameList"></datalist>
               <div class="quick-picks" data-picks-for="clientFullName"></div>
+              <div class="cloud-panel" data-cloud-panel="clientFullName"></div>
             </label>
             <label>
               <span>Client Short Name</span>
@@ -114,7 +125,17 @@
               />
             </label>
             <label>
-              <span>Topic Focus</span>
+              <div class="field-head">
+                <span>Topic Focus</span>
+                <button
+                  type="button"
+                  class="cloud-trigger"
+                  data-cloud-for="topicFocus"
+                  title="Top activity"
+                >
+                  Top
+                </button>
+              </div>
               <span class="lock">
                 <input type="checkbox" data-include-for="topicFocus" checked />
                 Include
@@ -128,9 +149,20 @@
               />
               <datalist id="topicFocusList"></datalist>
               <div class="quick-picks" data-picks-for="topicFocus"></div>
+              <div class="cloud-panel" data-cloud-panel="topicFocus"></div>
             </label>
             <label>
-              <span>Case / Settlement Name</span>
+              <div class="field-head">
+                <span>Case / Settlement Name</span>
+                <button
+                  type="button"
+                  class="cloud-trigger"
+                  data-cloud-for="caseName"
+                  title="Top activity"
+                >
+                  Top
+                </button>
+              </div>
               <input
                 id="caseName"
                 type="text"
@@ -139,6 +171,7 @@
               />
               <datalist id="caseNameList"></datalist>
               <div class="quick-picks" data-picks-for="caseName"></div>
+              <div class="cloud-panel" data-cloud-panel="caseName"></div>
             </label>
             <details class="advanced">
               <summary>Advanced filters</summary>

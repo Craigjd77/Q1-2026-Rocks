@@ -33,6 +33,7 @@ const data = {
     "CALSTRS",
     "NYSRETIRE",
   ],
+  clientFullName: [],
   clientType: [
     "Institutional investor",
     "Asset manager",
@@ -77,6 +78,7 @@ const data = {
     "Marketing updates",
     "Webinar and events",
   ],
+  caseName: [],
   caseStage: [
     "New filing",
     "Lead plaintiff motion",
@@ -284,9 +286,11 @@ const data = {
 
 const datalistIds = [
   "mailboxScope",
+  "clientFullName",
   "clientShortName",
   "clientType",
   "topicFocus",
+  "caseName",
   "caseStage",
   "jurisdiction",
   "priority",
@@ -380,9 +384,11 @@ const fillDatalist = (list, options) => {
 
 const loadOptions = () => {
   fillDatalist(datalistElements.mailboxScope, data.mailboxScope);
+  fillDatalist(datalistElements.clientFullName, data.clientFullName);
   fillDatalist(datalistElements.clientShortName, data.clientShortName);
   fillDatalist(datalistElements.clientType, data.clientType);
   fillDatalist(datalistElements.topicFocus, data.topicFocus);
+  fillDatalist(datalistElements.caseName, data.caseName);
   fillDatalist(datalistElements.caseStage, data.caseStage);
   fillDatalist(datalistElements.jurisdiction, data.jurisdiction);
   fillDatalist(datalistElements.priority, data.priority);
@@ -415,6 +421,38 @@ const normalizeValue = (value) => {
 const normalizeText = (value) => normalizeValue(value);
 const includeValue = (id, value) =>
   isIncluded(id) ? normalizeValue(value) : "";
+
+const mergeList = (base, extra) => {
+  const set = new Set(base);
+  (extra || []).forEach((value) => {
+    const normalized = normalizeValue(value);
+    if (normalized) {
+      set.add(normalized);
+    }
+  });
+  return Array.from(set);
+};
+
+const applyPresets = (presets) => {
+  data.clientFullName = mergeList(data.clientFullName, presets.clientFullName);
+  data.clientShortName = mergeList(
+    data.clientShortName,
+    presets.clientShortName
+  );
+  data.caseName = mergeList(data.caseName, presets.caseName);
+  data.topicFocus = mergeList(data.topicFocus, presets.topicFocus);
+};
+
+const loadPresets = async () => {
+  try {
+    const response = await fetch("data/presets.json", { cache: "no-store" });
+    if (!response.ok) return;
+    const presets = await response.json();
+    applyPresets(presets);
+  } catch (error) {
+    // Ignore missing presets; base lists still work.
+  }
+};
 
 const getCaseName = () => normalizeText(caseNameInput.value);
 
@@ -884,9 +922,15 @@ const saveFavorite = () => {
   renderFavorites();
 };
 
-loadOptions();
-buildRecipes();
-renderFavorites();
+const init = async () => {
+  loadOptions();
+  await loadPresets();
+  loadOptions();
+  buildRecipes();
+  renderFavorites();
+};
+
+init();
 
 if (copyQueryButton) {
   copyQueryButton.addEventListener("click", () => {

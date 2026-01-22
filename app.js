@@ -350,6 +350,9 @@ const favoritesEmpty = document.getElementById("favorites-empty");
 const favoritesCount = document.getElementById("favoritesCount");
 const queryOutput = document.getElementById("queryOutput");
 const copyQueryButton = document.getElementById("copyQueryButton");
+const randomPromptOutput = document.getElementById("randomPromptOutput");
+const randomPromptButton = document.getElementById("randomPromptButton");
+const copyRandomPromptButton = document.getElementById("copyRandomPromptButton");
 
 const FAVORITES_KEY = "frtOutlookFavorites";
 const includeInputs = Array.from(
@@ -464,6 +467,15 @@ const loadPresets = async () => {
 let wordCloudData = null;
 
 const loadWordCloud = async () => {
+  const embedded = document.getElementById("wordcloud-data");
+  if (embedded && embedded.textContent.trim()) {
+    try {
+      wordCloudData = JSON.parse(embedded.textContent);
+      return;
+    } catch (error) {
+      wordCloudData = null;
+    }
+  }
   try {
     const response = await fetch("data/wordcloud.json", { cache: "no-store" });
     if (!response.ok) return;
@@ -717,7 +729,10 @@ const buildSearchQuery = (values) => {
   if (folderPath && !folderPath.startsWith("[object")) {
     strictTerms.push(`folder:"${folderPath}"`);
   }
-  if (clientShortName) {
+  if (clientFullName) {
+    flexTerms.push(wrapTerm(clientFullName));
+  }
+  if (clientShortName && clientShortName !== clientFullName) {
     flexTerms.push(wrapTerm(clientShortName));
   }
   if (includeValue("topicFocus", values.topicFocus)) {
@@ -804,6 +819,104 @@ const copyText = async (text) => {
     fallback.select();
     document.execCommand("copy");
     document.body.removeChild(fallback);
+  }
+};
+
+const cutePromptSubjects = [
+  "a fluffy kitten peeking from a teacup",
+  "a playful puppy with a wagging tail",
+  "a tiny bunny holding a strawberry",
+  "a cheerful baby penguin sliding on snow",
+  "a sleepy panda hugging a pillow",
+  "a smiling cloud drifting over a meadow",
+  "a tiny turtle wearing a leaf hat",
+  "a gentle fawn resting in tall grass",
+  "a pair of baby chicks exploring daisies",
+  "a tiny otter floating with a flower",
+  "a little hedgehog carrying a mushroom",
+  "a friendly fox curled up with a book",
+  "a whimsical ladybug on a sunflower",
+  "a tiny robot toy holding a balloon",
+  "a happy turtle riding a lily pad",
+  "a baby elephant with a flower crown",
+  "a soft lamb standing by a fence",
+  "a cozy hamster in a tiny hammock",
+  "a sleepy sloth in a tree swing",
+  "a smiling star above a quiet village",
+  "a tiny frog sipping tea on a log",
+  "a cheerful snowman with a scarf",
+  "a baby seal waving from a shoreline",
+  "a gentle whale with bubbles above it",
+];
+
+const cutePromptSettings = [
+  "in a sunny meadow",
+  "beside a calm pond",
+  "under a pastel rainbow",
+  "on a cozy windowsill",
+  "in a little cottage garden",
+  "inside a storybook forest",
+  "on a quiet beach at sunrise",
+  "in a snowy field with soft light",
+  "beneath a starlit sky",
+  "among wildflowers and butterflies",
+  "on a picnic blanket",
+  "in a tiny reading nook",
+  "near a small wooden fence",
+  "on a hill with gentle clouds",
+  "inside a warm bakery",
+  "by a bubbling creek",
+  "at a tiny tea party table",
+  "in a clean, simple studio backdrop",
+];
+
+const cutePromptStyles = [
+  "soft pastel watercolor",
+  "storybook illustration",
+  "gentle clay-style render",
+  "minimalist illustration",
+  "warm pencil and pastel",
+  "clean digital illustration",
+  "paper-cut collage style",
+  "cozy gouache painting",
+  "simple vector art",
+  "softly lit 3D render",
+];
+
+const cutePromptDetails = [
+  "with warm, comforting colors",
+  "with soft lighting and subtle textures",
+  "with a cozy, innocent mood",
+  "with delicate, rounded shapes",
+  "with gentle shading and a calm palette",
+  "with subtle sparkles and bokeh",
+  "with tiny flowers and floating petals",
+  "with a simple, uncluttered background",
+];
+
+let lastCutePrompt = "";
+
+const pickRandom = (items) =>
+  items[Math.floor(Math.random() * items.length)];
+
+const buildCutePrompt = () => {
+  const subject = pickRandom(cutePromptSubjects);
+  const setting = pickRandom(cutePromptSettings);
+  const style = pickRandom(cutePromptStyles);
+  const detail = pickRandom(cutePromptDetails);
+  return `Ultra-conservative, G-rated, family-safe ${style} illustration of ${subject} ${setting}, ${detail}. Cute, innocent, wholesome. No text, no logos, no brands, no violence, no romance, no suggestive content.`;
+};
+
+const generateCutePrompt = () => {
+  let prompt = buildCutePrompt();
+  let guard = 0;
+  while (prompt === lastCutePrompt && guard < 4) {
+    prompt = buildCutePrompt();
+    guard += 1;
+  }
+  lastCutePrompt = prompt;
+  if (randomPromptOutput) {
+    randomPromptOutput.textContent = prompt;
   }
 };
 
@@ -1006,6 +1119,20 @@ if (copyQueryButton) {
   copyQueryButton.addEventListener("click", () => {
     if (queryOutput) {
       copyText(queryOutput.textContent);
+    }
+  });
+}
+
+if (randomPromptButton) {
+  randomPromptButton.addEventListener("click", () => {
+    generateCutePrompt();
+  });
+}
+
+if (copyRandomPromptButton) {
+  copyRandomPromptButton.addEventListener("click", () => {
+    if (randomPromptOutput) {
+      copyText(randomPromptOutput.textContent);
     }
   });
 }
